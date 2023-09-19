@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Http\Resources\categoryResource;
+
 use Validator;
 class CategoryController extends Controller 
 {
@@ -10,7 +12,7 @@ class CategoryController extends Controller
   public function index()
   {
 
-    $category = Category::all();
+    $category =categoryResource::collection(Category::all()) ;
     
 
       return response()->json([
@@ -23,6 +25,32 @@ class CategoryController extends Controller
 
   }
 
+  public function show($id)
+  {
+
+    $category= Category::where('id',$id)->first();
+                  
+                if($category){  
+                              return response()->json([
+                                "success" => true,
+                                "message" => "Product is exsist",
+                                "data" => new categoryResource($category)
+                                                    ],200);
+                          
+                            }else {
+                               return response()->json([
+                                  "success" => true,
+                                  "message" => "The product not exsist",
+                                  "data" => "null"
+                              ],401);
+                           
+                  
+                }
+     
+
+
+
+  }
 
  
  
@@ -38,10 +66,15 @@ class CategoryController extends Controller
       
                             ]);
 
-          if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors()); 
-                
-        }
+         if($validator->fails()){
+            
+                              return response()->json([
+                                "success" => false,
+                                "message" =>$validator->errors(),
+                                "data" =>[]
+                            ],401);
+                      
+              }
 
         $category = Category::create($input);
 
@@ -49,7 +82,7 @@ class CategoryController extends Controller
           return response()->json([
             "success" => true,
             "message" => "category inserted successfully.",
-            "data" => $category
+            "data" => new categoryResource($category)
         ],200);
   }
 
@@ -64,10 +97,15 @@ class CategoryController extends Controller
       
                             ]);
 
-          if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors()); 
-                
-        }
+     if($validator->fails()){
+            
+                  return response()->json([
+                    "success" => false,
+                    "message" =>$validator->errors(),
+                    "data" =>[]
+                ],401);
+                      
+              }
         $category = Category::where('id',$id)->first();
         $category->category_name = $input['category_name'];
         $category->category_image= $input['category_image'];
@@ -78,7 +116,7 @@ class CategoryController extends Controller
           return response()->json([
             "success" => true,
             "message" => "category inserted successfully.",
-            "data" => $category
+            "data" =>  new categoryResource($category)
         ],200);
   }
 
@@ -88,14 +126,14 @@ class CategoryController extends Controller
     $category = Category::where('id',$id)->first();
         if($category){
           $category->delete();
-              $all_category=Category::all();
+              $all_category=categoryResource::collection(Category::all());
                 return response()->json([
                       "success" => true,
                       "message" => "category deleted successfully.",
                       "data" =>  $all_category
                 ]);
         }else{
-          $all_category=Category::all();
+          $all_category=categoryResource::collection(Category::all());
                 return response()->json([
                   "error" => true,
                   "message" => "the category does not exsist ",

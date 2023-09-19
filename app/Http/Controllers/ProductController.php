@@ -6,6 +6,8 @@ namespace App\Http\Controllers;
 use Validator;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Http\Resources\productResource;
+
 class ProductController extends Controller 
 {
 
@@ -13,9 +15,11 @@ class ProductController extends Controller
   public function index()
   {
 
-    $products = Product::all();
+    $products = productResource::collection(Product::all());
     
-
+    if (is_null($products)) {
+      return $this->sendError('Products not found.');
+                            }
       return response()->json([
             "success" => true,
             "message" => "Product List",
@@ -25,7 +29,37 @@ class ProductController extends Controller
 
 
   }
+  public function show($id)
+  {
 
+     $product = Product::where('id',$id)->first();
+                  
+                if (is_null($product)) {
+                  return $this->sendError('Product not found.');
+                                        }
+
+
+                if($product){  
+                              return response()->json([
+                                "success" => true,
+                                "message" => "Product is exsist",
+                                "data" => new productResource($product)
+                                                    ],200);
+                          
+                            }else {
+                               return response()->json([
+                                  "success" => true,
+                                  "message" => "The product not exsist",
+                                  "data" => "null"
+                              ],401);
+                           
+                  
+                }
+     
+
+
+
+  }
 
  
  
@@ -41,9 +75,14 @@ class ProductController extends Controller
       
                             ]);
 
-          if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors()); 
-                
+          if($validator->fails() ){
+  
+          
+                              return response()->json([
+                                "success" => false,
+                                "message" =>$validator->errors(),
+                                "data" =>[]
+                            ],401);
         }
 
           $product = Product::create($input);
@@ -52,7 +91,7 @@ class ProductController extends Controller
           return response()->json([
             "success" => true,
             "message" => "Product inserted successfully.",
-            "data" => $product
+            "data" => new productResource($product)
         ],200);
   }
 
@@ -70,7 +109,12 @@ class ProductController extends Controller
                             ]);
 
           if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors()); 
+            
+                        return response()->json([
+                          "success" => false,
+                          "message" =>$validator->errors(),
+                          "data" =>[]
+                      ],401);
                 
         }
         $product = Product::where('id',$id)->first();
@@ -85,7 +129,7 @@ class ProductController extends Controller
           return response()->json([
             "success" => true,
             "message" => "Product inserted successfully.",
-            "data" => $product
+            "data" => new productResource($product)
         ],200);
   }
 
@@ -93,16 +137,20 @@ class ProductController extends Controller
   public function destroy($id)
   {
     $product = Product::where('id',$id)->first();
+
+    if (is_null($product)) {
+      return $this->sendError('Product not found.');
+                            }
         if($product){
               $product->delete();
-              $all_product=Product::all();
+              $all_product=productResource::collection(Product::all());
                 return response()->json([
                       "success" => true,
                       "message" => "Product deleted successfully.",
                       "data" => $all_product
                 ]);
         }else{
-              $all_product=Product::all();
+          $all_product=productResource::collection(Product::all());
                 return response()->json([
                   "error" => true,
                   "message" => "the product does not exsist ",

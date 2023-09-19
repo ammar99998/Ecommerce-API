@@ -46,16 +46,18 @@ Route::group(
      ############### product routes#################### 
      
         Route::get('/product', [ProductController::class, 'index'])->middleware('auth:sanctum'); 
+        Route::get('/product/{id}', [ProductController::class, 'show'])->middleware('auth:sanctum');
         Route::post('/product', [ProductController::class, 'store'])->middleware('auth:sanctum'); 
         Route::post('/product/{id}', [ProductController::class, 'update'])->middleware('auth:sanctum');
         Route::post('/deleteProduct/{id}', [ProductController::class, 'destroy'])->middleware('auth:sanctum');
- ############### Category routes#################### 
+     ############### Category routes#################### 
  
-        Route::get('/category', [CategoryController::class, 'index'])->middleware('auth:sanctum'); 
+        Route::get('/category', [CategoryController::class, 'index'])->middleware('auth:sanctum');
+        Route::get('/category/{id}', [CategoryController::class, 'show'])->middleware('auth:sanctum');  
         Route::post('/category', [CategoryController::class, 'store'])->middleware('auth:sanctum'); 
         Route::post('/category/{id}', [CategoryController::class, 'update'])->middleware('auth:sanctum');
         Route::post('/deletecategory/{id}', [CategoryController::class, 'destroy'])->middleware('auth:sanctum');
 
-    ############### login route  #####################
-    Route::post('/login', [loginController::class, 'login']); 
+     ############### login route  #####################
+     Route::post('/login', [loginController::class, 'login']); 
    
