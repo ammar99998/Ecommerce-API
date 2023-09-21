@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Auth;
 class loginController extends Controller
 {
     public function login(Request $request){
@@ -26,5 +27,13 @@ class loginController extends Controller
             $token = $user->CreateToken($user->name);
             return response()->json(["token"=>$token->plainTextToken,"user"=>$user]);
 
+     }
+
+     public function logout(Request $request){
+
+       auth()->user()->tokens()->delete();
+      return [
+          'message' => 'user logged out'
+      ];
      }
 }
