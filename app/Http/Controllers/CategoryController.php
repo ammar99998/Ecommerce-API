@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Resources\categoryResource;
-
+use Auth;
 use Validator;
 class CategoryController extends Controller 
 {
@@ -143,6 +143,7 @@ class CategoryController extends Controller
 
     
   }
+
   
 }
 

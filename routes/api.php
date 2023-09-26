@@ -61,10 +61,15 @@ Route::group(
                Route::post('/category', [CategoryController::class, 'store']); 
                Route::post('/category/{id}', [CategoryController::class, 'update']);
                Route::post('/deletecategory/{id}', [CategoryController::class, 'destroy']);
+
+           
+
+
+
          });
         
 
      ############### login route  #####################
      Route::post('/login', [loginController::class, 'login']); 
      Route::post('/logout', [loginController::class, 'logout'])->middleware('auth:sanctum');
-   
+    
